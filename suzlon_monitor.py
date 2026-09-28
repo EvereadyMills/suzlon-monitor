@@ -27,6 +27,12 @@ STATE_FILE = "suzlon_states.json"         # last known status of every WTG
 REPORT_LOG_FILE = "suzlon_report_log.json"  # which 8 AM / 6 PM reports were sent
 IST = pytz.timezone("Asia/Kolkata")
 LOGIN_FAIL_ALERT_AFTER = 4                # alert after 4 failed runs in a row (~1 hour)
+# Values the table shows BEFORE live data arrives - never treat these as a real status
+PLACEHOLDERS = {"unknown", "n/a", "na", "-", "", "loading", "loading..."}
+
+
+def is_placeholder(value):
+    return str(value).strip().lower() in PLACEHOLDERS
 
 
 # ---------------- FILE HELPERS ----------------
@@ -85,8 +91,8 @@ def wtg_lines(item):
         f" Loc.No        :  <b>{item['name']}</b>",
         f" Status         :  {item['status']}",
         f" w/s               :  {item['ws']}",
-        f" Cur.prod     :  {item['cur_prod']}",
-        f" Acc.prod     :  {item['acc_prod']}",
+        f" Cur.\u200bprod     :  {item['cur_prod']}",
+        f" Acc.\u200bprod     :  {item['acc_prod']}",
     ]
 
 
@@ -101,15 +107,11 @@ def change_message(item, old_status):
     return "\n".join(lines)
 
 
-def full_report_message(data, title, now_ist):
-    lines = [
-        "🌀 <b>Suzlon</b>",
-        f"📊 <b>{title}</b>",
-        f"🕒 {now_ist.strftime('%d-%m-%Y %I:%M %p')} IST",
-        "",
-        f"📍 <b>Location : {LOCATION_NAME}</b>",
-        "",
-    ]
+def full_report_message(data, title=None):
+    lines = ["🌀 <b>Suzlon</b>"]
+    if title:
+        lines.append(f"📊 <b>{title}</b>")
+    lines += ["", f"📍 <b>Location : {LOCATION_NAME}</b>", ""]
     for key in data:  # same order as the website table
         lines += wtg_lines(data[key])
         lines.append("")
@@ -213,6 +215,32 @@ def js_click(driver, el):
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", el)
 
 
+def read_table_js(driver):
+    """Re-find the table each time (the page may re-draw it) and read every cell.
+    textContent gives the full text even when the screen shows "WTG Status n..." """
+    tables = deep_find(driver, "table.consolidated-table")
+    if not tables:
+        return {"heads": [], "rows": []}
+    return driver.execute_script("""
+        var t = arguments[0];
+        var heads = [];
+        if (t.tHead && t.tHead.rows.length) {
+            var hc = t.tHead.rows[0].cells;
+            for (var i = 0; i < hc.length; i++) heads.push(hc[i].textContent.trim().toUpperCase());
+        }
+        var rows = [];
+        if (t.tBodies.length) {
+            var br = t.tBodies[0].rows;
+            for (var r = 0; r < br.length; r++) {
+                var cells = [];
+                for (var c = 0; c < br[r].cells.length; c++) cells.push(br[r].cells[c].textContent.trim());
+                rows.push(cells);
+            }
+        }
+        return {heads: heads, rows: rows};
+    """, tables[0])
+
+
 def read_consolidated_table(driver):
     print("3. Finding Consolidated View...")
     # After login Suzlon sometimes opens the Dashboard, sometimes the Home page.
@@ -287,26 +315,38 @@ def read_consolidated_table(driver):
         driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight;", scroller)
         time.sleep(1.5)
     driver.execute_script("arguments[0].scrollTop = 0;", scroller)
-    time.sleep(2)  # let live values finish filling in
 
-    # Read headers + all cells (native table API works inside shadow layers;
-    # textContent gives the full text even when the screen shows "WTG Status n...")
-    table = driver.execute_script("""
-        var t = arguments[0];
-        var heads = [];
-        if (t.tHead && t.tHead.rows.length) {
-            var hc = t.tHead.rows[0].cells;
-            for (var i = 0; i < hc.length; i++) heads.push(hc[i].textContent.trim().toUpperCase());
-        }
-        var rows = [];
-        var br = t.tBodies[0].rows;
-        for (var r = 0; r < br.length; r++) {
-            var cells = [];
-            for (var c = 0; c < br[r].cells.length; c++) cells.push(br[r].cells[c].textContent.trim());
-            rows.push(cells);
-        }
-        return {heads: heads, rows: rows};
-    """, table_el)
+    # Live values come a few seconds AFTER the table appears (first it shows
+    # "Unknown" / "N/A"). Keep re-reading until the live data has arrived.
+    print("5. Waiting for live data...")
+    table = None
+    refresh_clicked = False
+    start = time.time()
+    while time.time() - start < 150:
+        table = read_table_js(driver)
+        i_status = next((i for i, h in enumerate(table["heads"]) if "STATUS" in h), 1)
+        statuses = [r[i_status] for r in table["rows"] if len(r) > i_status]
+        pending = sum(1 for st in statuses if is_placeholder(st))
+        if statuses and pending == 0:
+            print(f"   Live data loaded after {int(time.time() - start)}s")
+            break
+        print(f"   {pending}/{len(statuses)} rows still waiting for live data...")
+
+        # After 60s with no live data, press the page's Refresh button once
+        if not refresh_clicked and time.time() - start > 60:
+            for b in deep_find(driver, "button"):
+                try:
+                    if (b.get_attribute("textContent") or "").strip().lower() == "refresh":
+                        print("   Clicking Refresh button")
+                        js_click(driver, b)
+                        refresh_clicked = True
+                        break
+                except Exception:
+                    continue
+        time.sleep(5)
+
+    if table is None or not table["rows"]:
+        raise RuntimeError("Consolidated table was empty.")
 
     heads = table["heads"]
 
@@ -340,6 +380,11 @@ def read_consolidated_table(driver):
     print(f"   Total WTGs read: {len(data)}")
     if not data:
         raise RuntimeError("Consolidated table was empty.")
+    pending = [n for n, v in data.items() if is_placeholder(v["status"])]
+    if len(pending) == len(data):
+        raise RuntimeError("Live data did not load - every WTG still shows Unknown.")
+    if pending:
+        print(f"   ⚠️ Still no live data for: {pending} (they will be skipped this run)")
     if expected and len(data) < expected:
         print(f"   ⚠️ Only {len(data)} of {expected} rows read")
     return data
@@ -352,10 +397,16 @@ def process(current_data, now_ist):
     log = load_json(REPORT_LOG_FILE)
     new_state = dict(current_data)
 
-    # 1. First ever run: no saved state -> one "started" message, no 20 change alerts
-    if not previous:
+    # Saved state with no real status at all (e.g. an earlier run that saved
+    # "Unknown" for everything) counts as a fresh start.
+    has_real_previous = any(
+        isinstance(v, dict) and not is_placeholder(v.get("status", "")) for v in previous.values()
+    )
+
+    # 1. First run: one "started" message, no 20 change alerts
+    if not has_real_previous:
         print("First run - saving state.")
-        if send_long_telegram(full_report_message(current_data, "Suzlon Monitor Started ✅", now_ist)):
+        if send_long_telegram(full_report_message(current_data)):
             # this full list also counts as the current 8 AM / 6 PM report (no duplicate)
             if now_ist.hour >= 18:
                 log["evening_report"] = today
@@ -370,6 +421,11 @@ def process(current_data, now_ist):
             if not isinstance(prev, dict):
                 continue  # new WTG appeared - just remember it
             old_status = prev.get("status", "-")
+            if is_placeholder(item["status"]):
+                new_state[name] = prev   # live data missing this run - keep last real value
+                continue
+            if is_placeholder(old_status):
+                continue                 # first real value for this WTG - just remember it
             if str(old_status).strip().lower() != str(item["status"]).strip().lower():
                 print(f"Status change: {name}: {old_status} -> {item['status']}")
                 if not send_telegram(change_message(item, old_status)):
@@ -384,7 +440,7 @@ def process(current_data, now_ist):
 
     if slot:
         print(f"Sending {title}...")
-        if send_long_telegram(full_report_message(current_data, title, now_ist)):
+        if send_long_telegram(full_report_message(current_data, title)):
             log[slot] = today
 
     log["login_fail_count"] = 0
