@@ -1,0 +1,54 @@
+name: Suzlon Monitor
+
+on:
+  schedule:
+    # Every 15 mins (avoids :00, when GitHub delays/skips scheduled runs)
+    - cron: '5,20,35,50 * * * *'
+  workflow_dispatch:
+
+# Never let two runs overlap (prevents double messages / push conflicts)
+concurrency:
+  group: suzlon-monitor
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install selenium requests pytz
+
+      - name: Run Suzlon Monitor
+        env:
+          SUZLON_USER: ${{ secrets.SUZLON_USER }}
+          SUZLON_PASS: ${{ secrets.SUZLON_PASS }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          SUZLON_CHAT_ID: ${{ secrets.SUZLON_CHAT_ID }}
+        run: python suzlon_monitor.py
+
+      - name: Commit and Push state files
+        if: always()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add suzlon_states.json || true
+          git add suzlon_report_log.json || true
+          git commit -m "Update Suzlon states" || exit 0
+          git pull --rebase || true
+          git push
