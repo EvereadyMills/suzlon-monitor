@@ -1,3 +1,12 @@
+      - name: Network check (temporary)
+        continue-on-error: true
+        run: |
+          echo "---- Runner location ----"
+          curl -s https://ipinfo.io/json || true
+          echo "---- HTTPS test ----"
+          curl -sv -o /dev/null https://windpro.suzlon.com/s/login/ 2>&1 | tail -25 || true
+          echo "---- TLS handshake ----"
+          echo | openssl s_client -connect windpro.suzlon.com:443 -servername windpro.suzlon.com 2>&1 | head -30 || true
 name: Suzlon Monitor
 
 on:
