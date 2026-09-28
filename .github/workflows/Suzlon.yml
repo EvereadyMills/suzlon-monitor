@@ -33,7 +33,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install selenium requests pytz
-          
+
       - name: Run Suzlon Monitor
         env:
           SUZLON_USER: ${{ secrets.SUZLON_USER }}
@@ -41,6 +41,15 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           SUZLON_CHAT_ID: ${{ secrets.SUZLON_CHAT_ID }}
         run: python suzlon_monitor.py
+
+      - name: Upload error screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshot
+          path: debug_screenshot.png
+          retention-days: 1
+          if-no-files-found: ignore
 
       - name: Commit and Push state files
         if: always()
