@@ -176,56 +176,137 @@ def login(driver):
     print("   Logged in. Landing page:", driver.current_url.split("?")[0])
 
 
+# Salesforce LWC hides components inside "shadow" layers that normal Selenium
+# search cannot see. This JS walks into every shadow layer to find elements.
+DEEP_JS = """
+function deepAll(root, sel, out) {
+    out = out || [];
+    try { root.querySelectorAll(sel).forEach(function (e) { if (out.indexOf(e) < 0) out.push(e); }); } catch (err) {}
+    var all = root.querySelectorAll('*');
+    for (var i = 0; i < all.length; i++) {
+        if (all[i].shadowRoot) deepAll(all[i].shadowRoot, sel, out);
+    }
+    return out;
+}
+"""
+
+
+def deep_find(driver, css):
+    return driver.execute_script(DEEP_JS + "return deepAll(document, arguments[0]);", css) or []
+
+
+def find_consolidated_button(driver):
+    # 1st: by data-tab attribute, 2nd: any button/tab whose text is "Consolidated View"
+    found = deep_find(driver, 'button[data-tab="consolidated"], button.kpi-tab--consolidated')
+    if found:
+        return found[0]
+    for el in deep_find(driver, 'button, [role="tab"], a'):
+        try:
+            if "consolidated view" in (el.get_attribute("textContent") or "").strip().lower():
+                return el
+        except Exception:
+            continue
+    return None
+
+
+def js_click(driver, el):
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", el)
+
+
 def read_consolidated_table(driver):
     print("3. Finding Consolidated View...")
     # After login Suzlon sometimes opens the Dashboard, sometimes the Home page.
-    #  - Dashboard  -> Consolidated View button is already there
+    #  - Dashboard  -> Consolidated View box is already there
     #  - Home page  -> click the "Machine Performance" tile (link to /s/dashboard)
     #  - Neither    -> open the dashboard URL directly
     tile_clicked = False
     direct_opened = False
     start = time.time()
+    start_tile = start
     tab = None
-    while time.time() - start < 120:
-        buttons = driver.find_elements(By.CSS_SELECTOR, 'button[data-tab="consolidated"]')
-        if buttons:
-            tab = buttons[0]
+    while time.time() - start < 150:
+        tab = find_consolidated_button(driver)
+        if tab is not None:
             break
 
         elapsed = time.time() - start
-        if not tile_clicked and elapsed > 5:
-            tiles = driver.find_elements(By.CSS_SELECTOR, 'a[href="/s/dashboard"], a[href$="/s/dashboard"]')
+        if not tile_clicked and elapsed > 8 and "/s/dashboard" not in driver.current_url:
+            tiles = deep_find(driver, 'a[href="/s/dashboard"], a[href$="/s/dashboard"]')
             if tiles:
                 print("   Home page detected -> clicking Machine Performance tile")
-                driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", tiles[0])
+                js_click(driver, tiles[0])
                 tile_clicked = True
                 start_tile = time.time()
 
-        if not direct_opened and (elapsed > 40 or (tile_clicked and time.time() - start_tile > 30)):
+        if not direct_opened and "/s/dashboard" not in driver.current_url and (
+            elapsed > 45 or (tile_clicked and time.time() - start_tile > 30)
+        ):
             print("   Opening dashboard URL directly")
             driver.get(DASHBOARD_URL)
             direct_opened = True
 
-        time.sleep(2)
+        time.sleep(3)
 
     if tab is None:
-        raise RuntimeError("Consolidated View button not found (page: " + driver.current_url.split("?")[0] + ")")
+        raise RuntimeError("Consolidated View box not found (page: " + driver.current_url.split("?")[0] + ")")
 
-    wait = WebDriverWait(driver, 60)
-    driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", tab)
+    print("   Dashboard ready:", driver.current_url.split("?")[0])
+    js_click(driver, tab)
     print("4. Consolidated View clicked, waiting for table...")
 
-    wait.until(lambda d: len(d.find_elements(By.CSS_SELECTOR, "table.consolidated-table tbody tr")) > 0)
-    time.sleep(4)  # let live values finish filling in
+    # Wait for the table rows
+    table_el = None
+    for _ in range(30):
+        tables = deep_find(driver, "table.consolidated-table")
+        if tables:
+            rows = driver.execute_script("var t=arguments[0]; return t.tBodies.length ? t.tBodies[0].rows.length : 0;", tables[0])
+            if rows > 0:
+                table_el = tables[0]
+                break
+        time.sleep(2)
+    if table_el is None:
+        raise RuntimeError("Consolidated table did not load.")
 
-    # Read headers + all cells in one go (textContent = full text, even if cut with "...")
+    # How many records the page says it has ("20 Records")
+    expected = 0
+    counts = deep_find(driver, "p.consolidated-count, .consolidated-count")
+    if counts:
+        digits = "".join(ch for ch in (counts[0].get_attribute("textContent") or "") if ch.isdigit())
+        expected = int(digits) if digits else 0
+    print(f"   Page says {expected or '?'} records")
+
+    # Scroll the table box to the bottom step by step so every row is loaded
+    wrappers = deep_find(driver, ".consolidated-table-wrapper")
+    scroller = wrappers[0] if wrappers else table_el
+    last = -1
+    for _ in range(15):
+        count = driver.execute_script("return arguments[0].tBodies[0].rows.length;", table_el)
+        if (expected and count >= expected) or count == last:
+            break
+        last = count
+        driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight;", scroller)
+        time.sleep(1.5)
+    driver.execute_script("arguments[0].scrollTop = 0;", scroller)
+    time.sleep(2)  # let live values finish filling in
+
+    # Read headers + all cells (native table API works inside shadow layers;
+    # textContent gives the full text even when the screen shows "WTG Status n...")
     table = driver.execute_script("""
-        const t = document.querySelector('table.consolidated-table');
-        const heads = [...t.querySelectorAll('thead th')].map(th => th.textContent.trim().toUpperCase());
-        const rows = [...t.querySelectorAll('tbody tr')].map(tr =>
-            [...tr.querySelectorAll('td')].map(td => td.textContent.trim()));
+        var t = arguments[0];
+        var heads = [];
+        if (t.tHead && t.tHead.rows.length) {
+            var hc = t.tHead.rows[0].cells;
+            for (var i = 0; i < hc.length; i++) heads.push(hc[i].textContent.trim().toUpperCase());
+        }
+        var rows = [];
+        var br = t.tBodies[0].rows;
+        for (var r = 0; r < br.length; r++) {
+            var cells = [];
+            for (var c = 0; c < br[r].cells.length; c++) cells.push(br[r].cells[c].textContent.trim());
+            rows.push(cells);
+        }
         return {heads: heads, rows: rows};
-    """)
+    """, table_el)
 
     heads = table["heads"]
 
@@ -256,9 +337,11 @@ def read_consolidated_table(driver):
             "acc_prod": cells[i_acc] or "-",
         }
 
-    print(f"   Total WTGs found: {len(data)}")
+    print(f"   Total WTGs read: {len(data)}")
     if not data:
         raise RuntimeError("Consolidated table was empty.")
+    if expected and len(data) < expected:
+        print(f"   ⚠️ Only {len(data)} of {expected} rows read")
     return data
 
 
