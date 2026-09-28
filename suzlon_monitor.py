@@ -14,8 +14,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # ---------------- SETTINGS ----------------
-LOGIN_URL = "https://windpro.suzlon.com/s/login/"
-DASHBOARD_URL = "https://windpro.suzlon.com/s/dashboard"
+LOGIN_URL = "https://www.windpro.suzlon.com/s/login/"
+DASHBOARD_URL = "https://www.windpro.suzlon.com/s/dashboard"
 LOCATION_NAME = "Tirunelveli"
 
 SUZLON_USER = os.environ.get("SUZLON_USER")
