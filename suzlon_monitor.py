@@ -162,15 +162,56 @@ def login(driver):
 
     if "verif" in driver.current_url.lower():
         raise RuntimeError("Suzlon is asking for a VERIFICATION CODE (new device/IP check).")
-    print("   Logged in:", driver.current_url)
+
+    # Salesforce goes through frontdoor.jsp -> /s/... ; wait until that finishes
+    try:
+        WebDriverWait(driver, 60).until(
+            lambda d: "frontdoor" not in d.current_url
+            and "/s/" in d.current_url
+            and d.execute_script("return document.readyState") == "complete"
+        )
+    except Exception:
+        pass
+    # print only the page path (the full URL contains a session id - keep it out of public logs)
+    print("   Logged in. Landing page:", driver.current_url.split("?")[0])
 
 
 def read_consolidated_table(driver):
-    print("3. Opening dashboard...")
-    driver.get(DASHBOARD_URL)
-    wait = WebDriverWait(driver, 60)
+    print("3. Finding Consolidated View...")
+    # After login Suzlon sometimes opens the Dashboard, sometimes the Home page.
+    #  - Dashboard  -> Consolidated View button is already there
+    #  - Home page  -> click the "Machine Performance" tile (link to /s/dashboard)
+    #  - Neither    -> open the dashboard URL directly
+    tile_clicked = False
+    direct_opened = False
+    start = time.time()
+    tab = None
+    while time.time() - start < 120:
+        buttons = driver.find_elements(By.CSS_SELECTOR, 'button[data-tab="consolidated"]')
+        if buttons:
+            tab = buttons[0]
+            break
 
-    tab = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'button[data-tab="consolidated"]')))
+        elapsed = time.time() - start
+        if not tile_clicked and elapsed > 5:
+            tiles = driver.find_elements(By.CSS_SELECTOR, 'a[href="/s/dashboard"], a[href$="/s/dashboard"]')
+            if tiles:
+                print("   Home page detected -> clicking Machine Performance tile")
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", tiles[0])
+                tile_clicked = True
+                start_tile = time.time()
+
+        if not direct_opened and (elapsed > 40 or (tile_clicked and time.time() - start_tile > 30)):
+            print("   Opening dashboard URL directly")
+            driver.get(DASHBOARD_URL)
+            direct_opened = True
+
+        time.sleep(2)
+
+    if tab is None:
+        raise RuntimeError("Consolidated View button not found (page: " + driver.current_url.split("?")[0] + ")")
+
+    wait = WebDriverWait(driver, 60)
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'}); arguments[0].click();", tab)
     print("4. Consolidated View clicked, waiting for table...")
 
@@ -296,6 +337,11 @@ def main():
     except Exception as e:
         print("❌ Error during execution:")
         traceback.print_exc()
+        try:
+            print("   Page at error:", driver.current_url.split("?")[0])
+            driver.save_screenshot("debug_screenshot.png")
+        except Exception:
+            pass
         record_failure(str(e)[:200])
         sys.exit(1)
     finally:
