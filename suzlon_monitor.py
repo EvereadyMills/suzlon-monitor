@@ -99,7 +99,6 @@ def wtg_lines(item):
 def change_message(item, old_status):
     lines = [
         "🌀 <b>Suzlon</b>",
-        f"⚠️ Status Changed : {old_status} ➜ {item['status']}",
         "",
         f"📍 <b>Location : {LOCATION_NAME}</b>",
     ]
