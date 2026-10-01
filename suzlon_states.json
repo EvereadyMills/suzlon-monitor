@@ -65,77 +65,77 @@
     "S617": {
         "name": "S617",
         "status": "Idling",
-        "ws": "1.33",
+        "ws": "1.55",
         "cur_prod": "0 MW",
         "acc_prod": "4.95 GWH"
     },
     "S622": {
         "name": "S622",
         "status": "Idling",
-        "ws": "1.51",
+        "ws": "1.24",
         "cur_prod": "0 MW",
         "acc_prod": "7.55 GWH"
     },
     "S627": {
         "name": "S627",
         "status": "Idling",
-        "ws": "1.51",
+        "ws": "1.07",
         "cur_prod": "0 MW",
         "acc_prod": "46.05 GWH"
     },
     "S628": {
         "name": "S628",
         "status": "Idling",
-        "ws": "1.55",
+        "ws": "1.51",
         "cur_prod": "0 MW",
         "acc_prod": "37.21 GWH"
     },
     "S632": {
         "name": "S632",
         "status": "Idling",
-        "ws": "1.23",
+        "ws": "1.4",
         "cur_prod": "0 MW",
         "acc_prod": "44.51 GWH"
     },
     "S635": {
         "name": "S635",
         "status": "Idling",
-        "ws": "1.55",
+        "ws": "1.24",
         "cur_prod": "0 MW",
         "acc_prod": "10.56 GWH"
     },
     "S642": {
         "name": "S642",
         "status": "Idling",
-        "ws": "1.73",
+        "ws": "1.45",
         "cur_prod": "0 MW",
         "acc_prod": "2.62 GWH"
     },
     "S643": {
         "name": "S643",
         "status": "Idling",
-        "ws": "1.39",
+        "ws": "1.3",
         "cur_prod": "0 MW",
         "acc_prod": "15.22 GWH"
     },
     "VL103": {
         "name": "VL103",
         "status": "Idling",
-        "ws": "0.89",
+        "ws": "1.08",
         "cur_prod": "0 MW",
         "acc_prod": "15.72 GWH"
     },
     "VL122": {
         "name": "VL122",
         "status": "Idling",
-        "ws": "1.3",
+        "ws": "0.88",
         "cur_prod": "0 MW",
         "acc_prod": "47.03 GWH"
     },
     "VL73": {
         "name": "VL73",
         "status": "Idling",
-        "ws": "1.58",
+        "ws": "0.61",
         "cur_prod": "0 MW",
         "acc_prod": "51.7 GWH"
     }
