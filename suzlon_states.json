@@ -2,14 +2,14 @@
     "R49": {
         "name": "R49",
         "status": "Idling",
-        "ws": "1.87",
+        "ws": "2.18",
         "cur_prod": "0 MW",
         "acc_prod": "3.95 GWH"
     },
     "S1": {
         "name": "S1",
         "status": "Idling",
-        "ws": "1.26",
+        "ws": "1.25",
         "cur_prod": "0 MW",
         "acc_prod": "32.2 GWH"
     },
@@ -65,28 +65,28 @@
     "S617": {
         "name": "S617",
         "status": "Idling",
-        "ws": "1.42",
+        "ws": "1.95",
         "cur_prod": "0 MW",
         "acc_prod": "4.95 GWH"
     },
     "S622": {
         "name": "S622",
         "status": "Idling",
-        "ws": "1.85",
+        "ws": "2.06",
         "cur_prod": "0 MW",
         "acc_prod": "7.55 GWH"
     },
     "S627": {
         "name": "S627",
         "status": "Idling",
-        "ws": "1.5",
+        "ws": "1.95",
         "cur_prod": "0 MW",
         "acc_prod": "46.05 GWH"
     },
     "S628": {
         "name": "S628",
         "status": "Idling",
-        "ws": "1.85",
+        "ws": "2.2",
         "cur_prod": "0 MW",
         "acc_prod": "37.21 GWH"
     },
@@ -100,36 +100,36 @@
     "S635": {
         "name": "S635",
         "status": "Idling",
-        "ws": "1.75",
+        "ws": "2.02",
         "cur_prod": "0 MW",
         "acc_prod": "10.57 GWH"
     },
     "S642": {
         "name": "S642",
         "status": "Idling",
-        "ws": "2",
+        "ws": "2.21",
         "cur_prod": "0 MW",
         "acc_prod": "2.63 GWH"
     },
     "S643": {
         "name": "S643",
         "status": "Idling",
-        "ws": "2.03",
+        "ws": "1.97",
         "cur_prod": "0 MW",
         "acc_prod": "15.23 GWH"
     },
     "VL103": {
         "name": "VL103",
         "status": "Idling",
-        "ws": "2.7",
+        "ws": "3.01",
         "cur_prod": "0 MW",
         "acc_prod": "15.73 GWH"
     },
     "VL122": {
         "name": "VL122",
         "status": "Generating",
-        "ws": "3.45",
-        "cur_prod": "0 MW",
+        "ws": "4.06",
+        "cur_prod": "0.06 MW",
         "acc_prod": "47.03 GWH"
     },
     "VL73": {
