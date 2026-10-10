@@ -2,14 +2,14 @@
     "R49": {
         "name": "R49",
         "status": "Idling",
-        "ws": "2.92",
+        "ws": "2.75",
         "cur_prod": "0 MW",
         "acc_prod": "3.95 GWH"
     },
     "S1": {
         "name": "S1",
         "status": "Idling",
-        "ws": "2.24",
+        "ws": "2.68",
         "cur_prod": "0 MW",
         "acc_prod": "32.2 GWH"
     },
@@ -65,14 +65,14 @@
     "S617": {
         "name": "S617",
         "status": "Idling",
-        "ws": "2.28",
+        "ws": "2.54",
         "cur_prod": "0 MW",
         "acc_prod": "4.95 GWH"
     },
     "S622": {
         "name": "S622",
         "status": "Idling",
-        "ws": "2.63",
+        "ws": "2.97",
         "cur_prod": "0 MW",
         "acc_prod": "7.55 GWH"
     },
@@ -86,42 +86,42 @@
     "S628": {
         "name": "S628",
         "status": "Idling",
-        "ws": "2.89",
+        "ws": "3.06",
         "cur_prod": "0 MW",
         "acc_prod": "37.21 GWH"
     },
     "S632": {
         "name": "S632",
         "status": "Idling",
-        "ws": "3.11",
+        "ws": "3.07",
         "cur_prod": "0 MW",
         "acc_prod": "44.51 GWH"
     },
     "S635": {
         "name": "S635",
         "status": "Idling",
-        "ws": "2.87",
+        "ws": "2.94",
         "cur_prod": "0 MW",
         "acc_prod": "10.57 GWH"
     },
     "S642": {
         "name": "S642",
         "status": "Idling",
-        "ws": "2.89",
+        "ws": "3.64",
         "cur_prod": "0 MW",
         "acc_prod": "2.63 GWH"
     },
     "S643": {
         "name": "S643",
         "status": "Idling",
-        "ws": "2.55",
+        "ws": "3.68",
         "cur_prod": "0 MW",
         "acc_prod": "15.23 GWH"
     },
     "VL103": {
         "name": "VL103",
         "status": "Idling",
-        "ws": "2.22",
+        "ws": "2.1",
         "cur_prod": "0 MW",
         "acc_prod": "15.73 GWH"
     },
@@ -135,7 +135,7 @@
     "VL73": {
         "name": "VL73",
         "status": "Idling",
-        "ws": "1.59",
+        "ws": "1.89",
         "cur_prod": "0 MW",
         "acc_prod": "51.71 GWH"
     }
