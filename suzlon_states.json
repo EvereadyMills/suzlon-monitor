@@ -1,16 +1,16 @@
 {
     "R49": {
         "name": "R49",
-        "status": "Generating",
-        "ws": "4.74",
-        "cur_prod": "0.09 MW",
+        "status": "NoComm",
+        "ws": "3.03",
+        "cur_prod": "0 MW",
         "acc_prod": "3.97 GWH"
     },
     "S1": {
         "name": "S1",
-        "status": "Generating",
-        "ws": "4.59",
-        "cur_prod": "0.03 MW",
+        "status": "Idling",
+        "ws": "3.84",
+        "cur_prod": "0 MW",
         "acc_prod": "32.22 GWH"
     },
     "S14": {
