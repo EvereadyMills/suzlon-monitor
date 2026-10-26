@@ -2,14 +2,14 @@
     "R49": {
         "name": "R49",
         "status": "Idling",
-        "ws": "2.71",
+        "ws": "1.46",
         "cur_prod": "0 MW",
         "acc_prod": "3.98 GWH"
     },
     "S1": {
         "name": "S1",
         "status": "Idling",
-        "ws": "3.15",
+        "ws": "2.79",
         "cur_prod": "0 MW",
         "acc_prod": "32.23 GWH"
     },
@@ -65,56 +65,56 @@
     "S617": {
         "name": "S617",
         "status": "Idling",
-        "ws": "3.04",
+        "ws": "1.77",
         "cur_prod": "0 MW",
         "acc_prod": "4.97 GWH"
     },
     "S622": {
         "name": "S622",
         "status": "Idling",
-        "ws": "3.62",
+        "ws": "1.81",
         "cur_prod": "0 MW",
         "acc_prod": "7.58 GWH"
     },
     "S627": {
         "name": "S627",
         "status": "Idling",
-        "ws": "3.15",
+        "ws": "1.56",
         "cur_prod": "0 MW",
         "acc_prod": "46.08 GWH"
     },
     "S628": {
         "name": "S628",
         "status": "Idling",
-        "ws": "3.28",
+        "ws": "1.67",
         "cur_prod": "0 MW",
         "acc_prod": "37.24 GWH"
     },
     "S632": {
         "name": "S632",
         "status": "Idling",
-        "ws": "3.03",
+        "ws": "1.64",
         "cur_prod": "0 MW",
         "acc_prod": "44.53 GWH"
     },
     "S635": {
         "name": "S635",
         "status": "Idling",
-        "ws": "3.16",
+        "ws": "1.62",
         "cur_prod": "0 MW",
         "acc_prod": "10.6 GWH"
     },
     "S642": {
         "name": "S642",
         "status": "Idling",
-        "ws": "3.25",
+        "ws": "1.68",
         "cur_prod": "0 MW",
         "acc_prod": "2.66 GWH"
     },
     "S643": {
         "name": "S643",
         "status": "Idling",
-        "ws": "3.18",
+        "ws": "1.82",
         "cur_prod": "0 MW",
         "acc_prod": "15.26 GWH"
     },
@@ -128,7 +128,7 @@
     "VL122": {
         "name": "VL122",
         "status": "Idling",
-        "ws": "1.83",
+        "ws": "1.24",
         "cur_prod": "0 MW",
         "acc_prod": "47.08 GWH"
     },
