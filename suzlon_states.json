@@ -1,16 +1,16 @@
 {
     "R49": {
         "name": "R49",
-        "status": "Generating",
-        "ws": "3.34",
+        "status": "Idling",
+        "ws": "1.85",
         "cur_prod": "0 MW",
         "acc_prod": "3.98 GWH"
     },
     "S1": {
         "name": "S1",
-        "status": "Generating",
-        "ws": "6.35",
-        "cur_prod": "0.07 MW",
+        "status": "Idling",
+        "ws": "2.72",
+        "cur_prod": "0 MW",
         "acc_prod": "32.24 GWH"
     },
     "S14": {
@@ -64,9 +64,9 @@
     },
     "S617": {
         "name": "S617",
-        "status": "NoComm",
-        "ws": "4.1",
-        "cur_prod": "0.07 MW",
+        "status": "Idling",
+        "ws": "1.59",
+        "cur_prod": "0 MW",
         "acc_prod": "4.98 GWH"
     },
     "S622": {
@@ -85,9 +85,9 @@
     },
     "S628": {
         "name": "S628",
-        "status": "NoComm",
-        "ws": "5.63",
-        "cur_prod": "0.13 MW",
+        "status": "Idling",
+        "ws": "2.04",
+        "cur_prod": "0 MW",
         "acc_prod": "37.25 GWH"
     },
     "S632": {
@@ -99,9 +99,9 @@
     },
     "S635": {
         "name": "S635",
-        "status": "NoComm",
-        "ws": "5.24",
-        "cur_prod": "0.09 MW",
+        "status": "Idling",
+        "ws": "2.09",
+        "cur_prod": "0 MW",
         "acc_prod": "10.61 GWH"
     },
     "S642": {
@@ -120,22 +120,22 @@
     },
     "VL103": {
         "name": "VL103",
-        "status": "Idling",
-        "ws": "1.72",
-        "cur_prod": "0 MW",
+        "status": "Generating",
+        "ws": "3.1",
+        "cur_prod": "0.01 MW",
         "acc_prod": "15.81 GWH"
     },
     "VL122": {
         "name": "VL122",
-        "status": "Idling",
-        "ws": "2.72",
-        "cur_prod": "-",
+        "status": "Generating",
+        "ws": "3.59",
+        "cur_prod": "0 MW",
         "acc_prod": "47.13 GWH"
     },
     "VL73": {
         "name": "VL73",
         "status": "Idling",
-        "ws": "1.86",
+        "ws": "3.35",
         "cur_prod": "0 MW",
         "acc_prod": "51.79 GWH"
     }
