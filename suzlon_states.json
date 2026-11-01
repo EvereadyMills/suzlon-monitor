@@ -1,16 +1,16 @@
 {
     "R49": {
         "name": "R49",
-        "status": "Idling",
-        "ws": "1.94",
-        "cur_prod": "0 MW",
+        "status": "Generating",
+        "ws": "3.9",
+        "cur_prod": "0.02 MW",
         "acc_prod": "3.98 GWH"
     },
     "S1": {
         "name": "S1",
-        "status": "Idling",
-        "ws": "2.94",
-        "cur_prod": "0 MW",
+        "status": "Generating",
+        "ws": "4.71",
+        "cur_prod": "0.01 MW",
         "acc_prod": "32.24 GWH"
     },
     "S14": {
@@ -65,7 +65,7 @@
     "S617": {
         "name": "S617",
         "status": "Idling",
-        "ws": "2.06",
+        "ws": "3.84",
         "cur_prod": "0 MW",
         "acc_prod": "4.98 GWH"
     },
@@ -85,9 +85,9 @@
     },
     "S628": {
         "name": "S628",
-        "status": "Idling",
-        "ws": "2.2",
-        "cur_prod": "0 MW",
+        "status": "Generating",
+        "ws": "3.68",
+        "cur_prod": "0.01 MW",
         "acc_prod": "37.25 GWH"
     },
     "S632": {
@@ -99,9 +99,9 @@
     },
     "S635": {
         "name": "S635",
-        "status": "Idling",
-        "ws": "2.07",
-        "cur_prod": "0 MW",
+        "status": "Generating",
+        "ws": "3.5",
+        "cur_prod": "0.02 MW",
         "acc_prod": "10.61 GWH"
     },
     "S642": {
@@ -121,21 +121,21 @@
     "VL103": {
         "name": "VL103",
         "status": "Idling",
-        "ws": "1.74",
+        "ws": "3.08",
         "cur_prod": "0 MW",
         "acc_prod": "15.81 GWH"
     },
     "VL122": {
         "name": "VL122",
         "status": "Idling",
-        "ws": "1.98",
+        "ws": "2.96",
         "cur_prod": "0 MW",
         "acc_prod": "47.13 GWH"
     },
     "VL73": {
         "name": "VL73",
         "status": "Idling",
-        "ws": "1.55",
+        "ws": "2.42",
         "cur_prod": "0 MW",
         "acc_prod": "51.79 GWH"
     }
