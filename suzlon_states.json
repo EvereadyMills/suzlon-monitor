@@ -120,21 +120,21 @@
     },
     "VL103": {
         "name": "VL103",
-        "status": "Idling",
+        "status": "NoComm",
         "ws": "3.23",
         "cur_prod": "0 MW",
         "acc_prod": "15.81 GWH"
     },
     "VL122": {
         "name": "VL122",
-        "status": "Idling",
+        "status": "NoComm",
         "ws": "3.02",
         "cur_prod": "0 MW",
         "acc_prod": "47.13 GWH"
     },
     "VL73": {
         "name": "VL73",
-        "status": "Idling",
+        "status": "NoComm",
         "ws": "3.53",
         "cur_prod": "-",
         "acc_prod": "51.79 GWH"
