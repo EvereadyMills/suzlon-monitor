@@ -2,15 +2,15 @@
     "R49": {
         "name": "R49",
         "status": "Generating",
-        "ws": "3.91",
-        "cur_prod": "0.02 MW",
+        "ws": "3.36",
+        "cur_prod": "0.01 MW",
         "acc_prod": "3.98 GWH"
     },
     "S1": {
         "name": "S1",
         "status": "Generating",
-        "ws": "7.02",
-        "cur_prod": "0.24 MW",
+        "ws": "5.85",
+        "cur_prod": "0.06 MW",
         "acc_prod": "32.24 GWH"
     },
     "S14": {
@@ -121,22 +121,22 @@
     "VL103": {
         "name": "VL103",
         "status": "Generating",
-        "ws": "5.53",
-        "cur_prod": "0.28 MW",
+        "ws": "3.66",
+        "cur_prod": "0.03 MW",
         "acc_prod": "15.81 GWH"
     },
     "VL122": {
         "name": "VL122",
         "status": "Generating",
-        "ws": "4.34",
-        "cur_prod": "0.21 MW",
+        "ws": "4.74",
+        "cur_prod": "0.12 MW",
         "acc_prod": "47.13 GWH"
     },
     "VL73": {
         "name": "VL73",
         "status": "Generating",
-        "ws": "4.85",
-        "cur_prod": "0.31 MW",
+        "ws": "3.57",
+        "cur_prod": "0.04 MW",
         "acc_prod": "51.79 GWH"
     }
 }
